@@ -1,0 +1,39 @@
+name: A demo does not import or play
+description: A demo or archive is refused, identified wrongly, or does not play.
+labels: [demos]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: App version
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Problem
+      options:
+        - Not imported (failed or skipped)
+        - Imported, but teams, players, scores or rounds are wrong
+        - Does not play, or plays wrongly
+        - Round jump or keys do not work
+    validations:
+      required: true
+  - type: textarea
+    id: file
+    attributes:
+      label: The demo
+      description: File name, CS version if you know it, and where it comes from (a public link if there is one). Do not attach game files.
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: What the app says
+      description: The reason on the Import page (or the `.txt` next to the file in `Drop\_failed`), or the message on the match page.
+  - type: textarea
+    id: console
+    attributes:
+      label: Game console log (playback problems)
+      description: The end of `cstrike\qconsole.log` in the game install that was used.
+      render: text

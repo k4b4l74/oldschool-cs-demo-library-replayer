@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Local data and test corpora (community demos are never committed)
+backend/tests/corpus/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.dem
+
+# Packaging output
+packaging/build/
+packaging/dist/
+
+# Editors / OS
+.idea/
+.vscode/
+Thumbs.db
+desktop.ini
+
+# game engines packed for the add-on (Valve files): never in git
+engines/
+
+# Notes and scripts for one machine (see AGENTS.md)
+CLAUDE.local.md
+Start dev app.cmd
