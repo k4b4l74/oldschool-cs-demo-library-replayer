@@ -14,10 +14,11 @@ Drop in old demos and archives, find any match, team or player, and watch it in 
 ![Local only](https://img.shields.io/badge/runs-100%25%20on%20your%20PC-4a5a2e?style=flat-square)
 ![License: MIT](https://img.shields.io/badge/license-MIT-4a5a2e?style=flat-square)
 
-<a href="docs/trailer/oldschool-cs-demos-trailer.mp4"><img src="docs/trailer/poster.jpg" alt="Watch the trailer" width="900"></a><br>
-<sub>▶ <a href="docs/trailer/oldschool-cs-demos-trailer.mp4">Watch the trailer</a> (38 s, with sound)</sub>
-
 </div>
+
+https://github.com/user-attachments/assets/e5aa5cb9-5986-4c06-943d-67193223065a
+
+<p align="center"><sub>The trailer (38 s, with sound). Full HD file: <a href="docs/trailer/oldschool-cs-demos-trailer.mp4">docs/trailer</a>.</sub></p>
 
 ## Why
 
