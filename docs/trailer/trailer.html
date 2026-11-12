@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oldschool CS Demos trailer</title>
+<style>
+  :root {
+    --bg: #2b3125; --panel: #4c5844; --panel2: #56634c; --title: #353d2f; --text: #dee5d6; --muted: #a3ad97;
+    --line: #2a3023; --hi: #899780; --accent: #c4b550; --hud: #ffb22e; --ok: #9fd27a; --ct: #9ec5ff; --t: #ff8f75;
+    --font: Tahoma, Verdana, "Segoe UI", sans-serif; --mono: "Lucida Console", Consolas, monospace;
+  }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: var(--font); color: var(--text);
+    background: radial-gradient(ellipse at 50% 38%, #3b4531 0%, #252b1e 62%, #15190f 100%); }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 0; }
+  img { display: block; }
+
+  /* background app shot, blurred */
+  #bg img { position: absolute; left: 0; top: 0; width: 1920px; height: 1234px; object-fit: cover; filter: blur(7px) brightness(.32) saturate(.8); }
+  #bg2 img { position: absolute; left: 0; top: 0; width: 1920px; height: 1234px; object-fit: cover; filter: blur(7px) brightness(.30) saturate(.8); }
+
+  /* film look */
+  #scan { background: repeating-linear-gradient(0deg, rgba(0,0,0,.10) 0 1px, transparent 1px 3px); mix-blend-mode: multiply; }
+  #vignette { background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,.65) 100%); }
+
+  /* falling archive names */
+  #rain span { position: absolute; font-family: var(--mono); font-size: 22px; color: var(--muted); white-space: nowrap; }
+  #rain span.hot { color: var(--accent); }
+
+  /* text */
+  .kicker { font-size: 22px; font-weight: 700; letter-spacing: .3em; color: var(--accent); text-transform: uppercase; }
+  .big { font-size: 76px; font-weight: 700; line-height: 1.08; letter-spacing: -.01em; text-shadow: 0 6px 30px rgba(0,0,0,.6); }
+  .mid { font-size: 44px; font-weight: 400; color: var(--muted); text-shadow: 0 4px 20px rgba(0,0,0,.6); }
+  .accent { color: var(--accent); }
+  .center { left: 0; right: 0; text-align: center; }
+
+  /* windows in the app's style */
+  .win { position: absolute; background: var(--panel); border: 2px solid; border-color: var(--hi) var(--line) var(--line) var(--hi);
+    box-shadow: 0 50px 140px rgba(0,0,0,.65), 0 0 0 1px rgba(0,0,0,.4); transform-origin: 50% 50%; }
+  .win .tb { height: 38px; background: var(--title); display: flex; align-items: center; gap: 12px; padding: 0 14px;
+    font-weight: 700; letter-spacing: .14em; font-size: 15px; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid var(--line); }
+  .win .tb .x { margin-left: auto; display: flex; gap: 6px; }
+  .win .tb .x i { width: 16px; height: 14px; background: var(--panel); border: 1px solid; border-color: var(--hi) var(--line) var(--line) var(--hi); }
+  .win .content { position: relative; overflow: hidden; }
+  .cross { display: inline-block; vertical-align: middle; }
+
+  /* lower-third caption */
+  .lower { position: absolute; left: 90px; bottom: 70px; padding: 22px 34px 26px; background: rgba(32,37,27,.92);
+    border-left: 6px solid var(--accent); box-shadow: 0 20px 60px rgba(0,0,0,.55); }
+  .lower .kicker { font-size: 18px; margin-bottom: 8px; }
+  .lower .big { font-size: 54px; }
+  .lower .mid { font-size: 28px; margin-top: 6px; }
+
+  /* drop scene */
+  #dropzone { position: absolute; left: 40px; top: 40px; right: 40px; bottom: 40px; border: 3px dashed var(--hi); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px; }
+  #dropzone b { font-size: 34px; color: var(--accent); }
+  #dropzone span { font-size: 22px; color: var(--muted); }
+  .chip { position: absolute; font-family: var(--mono); font-size: 21px; padding: 10px 16px; background: var(--title); color: var(--text);
+    border: 1px solid var(--hi); white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+  .counter { display: grid; grid-template-columns: 1fr; gap: 26px; }
+  .counter div { display: flex; flex-direction: column; }
+  .counter b { font-family: var(--mono); font-size: 92px; color: var(--hud); text-shadow: 0 0 24px rgba(255,178,46,.35); letter-spacing: -.02em; line-height: 1; }
+  .counter span { font-size: 20px; letter-spacing: .3em; color: var(--muted); text-transform: uppercase; margin-top: 6px; }
+
+  /* highlights */
+  .ring { position: absolute; border: 4px solid var(--hud); border-radius: 6px; box-shadow: 0 0 0 6px rgba(255,178,46,.18), 0 0 40px rgba(255,178,46,.55); }
+  .typed { position: absolute; font-family: var(--font); font-size: 13px; font-weight: 700; color: var(--text); white-space: pre; }
+  .caret { display: inline-block; width: 2px; height: 15px; background: var(--text); vertical-align: -3px; margin-left: 1px; }
+  .cursor { position: absolute; width: 0; height: 0; }
+  .cursor svg { position: absolute; left: 0; top: 0; filter: drop-shadow(0 3px 6px rgba(0,0,0,.6)); }
+  .toast { position: absolute; right: 26px; top: 64px; width: 420px; padding: 16px 20px; background: #2a3023; border: 1px solid var(--hi);
+    border-left: 6px solid var(--ok); box-shadow: 0 18px 50px rgba(0,0,0,.6); }
+  .toast b { display: block; font-size: 19px; color: var(--ok); }
+  .toast span { display: block; font-size: 15px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+
+  /* versions */
+  .tiles { position: absolute; left: 0; right: 0; top: 470px; display: flex; justify-content: center; gap: 26px; }
+  .tile { width: 248px; height: 230px; background: var(--panel); border: 2px solid; border-color: var(--hi) var(--line) var(--line) var(--hi);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 30px 70px rgba(0,0,0,.5); }
+  .tile .v { font-size: 64px; font-weight: 700; color: var(--text); }
+  .tile .v small { font-size: 30px; color: var(--muted); margin-right: 6px; }
+  .tile .e { font-family: var(--mono); font-size: 17px; color: var(--muted); text-align: center; line-height: 1.35; }
+  .tile .pill { font-size: 15px; font-weight: 700; letter-spacing: .2em; color: var(--ok); border: 1px solid var(--ok); padding: 2px 10px; }
+
+  /* outro */
+  .badges { display: flex; gap: 16px; justify-content: center; }
+  .badges span { font-size: 20px; font-weight: 700; letter-spacing: .22em; padding: 8px 16px; border: 1px solid var(--hi); color: var(--text); background: rgba(76,88,68,.55); }
+  .badges span.a { color: var(--on, #20251b); background: var(--accent); border-color: var(--accent); }
+  #fade { background: #000; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg" class="layer"><img src="assets/library-all.png" alt=""></div>
+  <div id="bg2" class="layer"><img src="assets/controls.png" alt="" style="object-position: 0 0"></div>
+  <div id="rain" class="layer"></div>
+
+  <!-- 1 · hook -->
+  <div id="s1" class="layer">
+    <svg id="s1cross" class="abs" style="left:900px;top:190px" width="120" height="120" viewBox="0 0 64 64">
+      <g fill="#9fd27a"><rect id="a1" x="9" y="29.5" width="16" height="5"/><rect id="a2" x="39" y="29.5" width="16" height="5"/>
+      <rect id="a3" x="29.5" y="9" width="5" height="16"/><rect id="a4" x="29.5" y="39" width="5" height="16"/></g>
+    </svg>
+    <div id="s1k" class="abs center kicker" style="top:380px">Since 2000</div>
+    <div id="s1a" class="abs center big" style="top:440px">Thousands of Counter-Strike demos…</div>
+    <div id="s1b" class="abs center mid" style="top:560px">…lost in old <span class="accent">.zip</span>, <span class="accent">.rar</span> and <span class="accent">.ace</span> packs.</div>
+  </div>
+
+  <!-- 2 · drop + counters -->
+  <div id="s2" class="layer">
+    <div id="s2cap" class="abs" style="left:150px;top:96px">
+      <div class="kicker">Import</div>
+      <div class="big" style="font-size:60px;margin-top:10px">Drop them in. <span class="accent">Every archive opened.</span></div>
+    </div>
+    <div id="s2win" class="win" style="left:150px;top:270px;width:860px;height:620px">
+      <div class="tb"><span>Add demos</span><span class="x"><i></i><i></i><i></i></span></div>
+      <div class="content" style="height:582px"><div id="dropzone"><b>Drag demos or archives here</b><span>.dem · .zip · .rar · .7z · .ace — even archives inside archives</span></div></div>
+    </div>
+    <div id="chips"></div>
+    <div id="s2count" class="abs counter" style="left:1180px;top:285px">
+      <div><b id="c1">0</b><span>matches</span></div>
+      <div><b id="c2">0</b><span>demos</span></div>
+      <div><b id="c3">0</b><span>rounds</span></div>
+      <div><b id="c4">0</b><span>kills</span></div>
+    </div>
+  </div>
+
+  <!-- 3 · library search -->
+  <div id="s3" class="layer">
+    <div id="s3win" class="win" style="left:260px;top:40px;width:1400px">
+      <div class="tb"><svg class="cross" width="18" height="18" viewBox="0 0 64 64"><g fill="#9fd27a"><rect x="9" y="29.5" width="16" height="5"/><rect x="39" y="29.5" width="16" height="5"/><rect x="29.5" y="9" width="5" height="16"/><rect x="29.5" y="39" width="5" height="16"/></g></svg><span>Oldschool CS Demos — Library</span><span class="x"><i></i><i></i><i></i></span></div>
+      <div id="s3c" class="content" style="height:900px">
+        <div id="s3zoom" class="abs" style="left:0;top:0;width:1400px;height:900px;transform-origin:0px 200px">
+          <img id="libA" class="abs" src="assets/library-all.png" style="width:1400px;height:900px" alt="">
+          <img id="libB" class="abs" src="assets/library.png" style="width:1400px;height:900px" alt="">
+          <div id="typebox" class="abs" style="left:34px;top:190px;width:252px;height:26px;background:#3a4433"></div>
+          <div id="typed" class="typed" style="left:41px;top:195px"></div>
+          <div id="ring43" class="ring" style="left:306px;top:70px;width:122px;height:30px"></div>
+        </div>
+      </div>
+    </div>
+    <div id="s3cap" class="lower"><div class="kicker">Search</div><div class="big">Any match, team or player.</div><div class="mid"><span class="accent">heaton + pott1</span> · <span class="accent">aAa + GG</span> · <span class="accent">k*l</span></div></div>
+  </div>
+
+  <!-- 4 · match -->
+  <div id="s4" class="layer">
+    <div id="s4win" class="win" style="left:260px;top:40px;width:1400px">
+      <div class="tb"><svg class="cross" width="18" height="18" viewBox="0 0 64 64"><g fill="#9fd27a"><rect x="9" y="29.5" width="16" height="5"/><rect x="39" y="29.5" width="16" height="5"/><rect x="29.5" y="9" width="5" height="16"/><rect x="29.5" y="39" width="5" height="16"/></g></svg><span>GG vs aAa*.xSa · de_train · 2004</span><span class="x"><i></i><i></i><i></i></span></div>
+      <div class="content" style="height:900px">
+        <div id="s4pan" class="abs" style="left:0;top:0;width:1400px;height:1500px">
+          <img class="abs" src="assets/match.png" style="width:1400px;height:1500px" alt="">
+          <div id="ringR7" class="ring" style="left:708px;top:676px;width:58px;height:30px"></div>
+          <div id="cur" class="cursor"><svg width="34" height="44" viewBox="0 0 34 44"><path d="M2 2 L2 36 L11 28 L17 42 L23 39 L17 26 L30 26 Z" fill="#fff" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div id="toast" class="toast"><b>▶ Starting CS 1.6</b><span>CS16_P47_build3248 · round 7</span></div>
+      </div>
+    </div>
+    <div id="s4cap" class="lower"><div class="kicker">Watch</div><div class="big">Every round. Every kill.</div><div class="mid">▶ R7 and the game starts <span class="accent">right at round 7</span>.</div></div>
+  </div>
+
+  <!-- 5 · versions -->
+  <div id="s5" class="layer">
+    <div id="s5k" class="abs center kicker" style="top:200px">Playback</div>
+    <div id="s5a" class="abs center big" style="top:250px">Every version, <span class="accent">its own engine</span>.</div>
+    <div id="s5b" class="abs center mid" style="top:356px">Each demo plays in the game version it was recorded with.</div>
+    <div class="tiles">
+      <div class="tile" id="t0"><div class="v"><small>CS</small>1.0</div><div class="e">WON 1.1.0.6</div><div class="pill">READY</div></div>
+      <div class="tile" id="t1"><div class="v"><small>CS</small>1.1</div><div class="e">WON 1.1.0.6</div><div class="pill">READY</div></div>
+      <div class="tile" id="t2"><div class="v"><small>CS</small>1.3</div><div class="e">WON 1.1.0.8</div><div class="pill">READY</div></div>
+      <div class="tile" id="t3"><div class="v"><small>CS</small>1.4</div><div class="e">WON 1.1.0.9</div><div class="pill">READY</div></div>
+      <div class="tile" id="t4"><div class="v"><small>CS</small>1.5</div><div class="e">WON 1.1.1.0</div><div class="pill">READY</div></div>
+      <div class="tile" id="t5"><div class="v"><small>CS</small>1.6</div><div class="e">builds 2511<br>3248 · 4554</div><div class="pill">READY</div></div>
+    </div>
+    <div id="s5c" class="abs center mid" style="top:770px;font-size:32px">Jump to any round · on every version · no Steam needed</div>
+  </div>
+
+  <!-- 6 · keys -->
+  <div id="s6" class="layer">
+    <div id="s6win" class="win" style="left:640px;top:70px;width:1000px">
+      <div class="tb"><span>Keys in the game</span><span class="x"><i></i><i></i><i></i></span></div>
+      <div class="content" style="height:860px;background:var(--panel)">
+        <div id="s6pan" class="abs" style="left:-20px;top:0;width:1400px;height:1200px">
+          <img class="abs" src="assets/controls.png" style="width:1400px;height:1200px" alt="">
+          <div id="ringZ" class="ring" style="left:524px;top:310px;width:156px;height:34px"></div>
+        </div>
+      </div>
+    </div>
+    <div id="s6cap" class="abs" style="left:110px;top:300px;width:500px">
+      <div class="kicker">Controls</div>
+      <div class="big" style="font-size:66px;margin-top:12px">Your keys, <span class="accent">in every version.</span></div>
+      <div class="mid" style="font-size:30px;margin-top:22px">HLTV free camera, pause, slow motion, fast forward… shown as printed on <em>your</em> keyboard.</div>
+    </div>
+  </div>
+
+  <!-- 7 · outro -->
+  <div id="s7" class="layer">
+    <svg id="s7icon" class="abs" style="left:880px;top:170px" width="160" height="160" viewBox="0 0 64 64">
+      <rect width="64" height="64" fill="#4c5844"/><rect width="64" height="2" fill="#899780"/><rect width="2" height="64" fill="#899780"/>
+      <rect y="62" width="64" height="2" fill="#2a3023"/><rect x="62" width="2" height="64" fill="#2a3023"/>
+      <g fill="#9fd27a"><rect x="9" y="29.5" width="16" height="5"/><rect x="39" y="29.5" width="16" height="5"/><rect x="29.5" y="9" width="5" height="16"/><rect x="29.5" y="39" width="5" height="16"/></g>
+    </svg>
+    <div id="s7t" class="abs center" style="top:370px;font-size:96px;font-weight:700;letter-spacing:.12em">OLDSCHOOL <span class="accent">CS</span> DEMOS</div>
+    <div id="s7s" class="abs center" style="top:490px;font-size:28px;letter-spacing:.5em;color:var(--muted)">LIBRARY · REPLAYER</div>
+    <div id="s7b" class="abs center badges" style="top:580px"><span class="a">FREE</span><span>OPEN SOURCE</span><span>WINDOWS 10 / 11</span><span>CS 1.0 – 1.6</span><span>v1.0.0</span></div>
+    <div id="s7u" class="abs center" style="top:700px;font-family:var(--mono);font-size:34px;color:var(--accent)">github.com/k4b4l74/oldschool-cs-demo-library-replayer</div>
+    <div id="s7by" class="abs center" style="top:780px;font-size:24px;color:var(--muted);letter-spacing:.2em">BY KABAL</div>
+  </div>
+
+  <div id="scan" class="layer"></div>
+  <div id="vignette" class="layer"></div>
+  <div id="fade" class="layer"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id)
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x))
+const p = (t, a, b) => cl((t - a) / (b - a))
+const eo = (x) => 1 - Math.pow(1 - x, 3)
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2)
+const back = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2) }
+const vis = (t, a, b, fi = 0.5, fo = 0.5) => Math.min(p(t, a, a + fi), 1 - p(t, b - fo, b))
+const set = (el, o, tr = '') => { el.style.opacity = o; el.style.transform = tr; el.style.visibility = o <= 0.001 ? 'hidden' : 'visible' }
+const fmt = (n) => Math.round(n).toLocaleString('en-US')
+
+// Scene times (seconds). GAME = length of the in-game clip inserted after the match scene (0 = none).
+const GAME = window.GAME || 0
+const T = { s1: [0, 4.4], s2: [4.2, 9.2], s3: [9.0, 15.2], s4: [15.0, 21.6] }
+const after = 21.6 + GAME
+T.s5 = [after - 0.2, after + 5.6]; T.s6 = [after + 5.4, after + 10.6]; T.s7 = [after + 10.4, after + 17.0]
+window.DURATION = T.s7[1]
+
+// falling archive names
+const NAMES = ['[aAa]_[GG]_[de_dust2]_[HLTV]_[ctt].zip', 'Ffr-s_aaa_dust_ct.ace', 'nbog_tamm1.rar', 'GG_IES_wcg2002.zip', '[NiP]_[SK]_[de_inferno]_[HLTV]_[ctt].rar',
+  'demos Avril Mai 2003.zip', 'HLTV.7z', 'cs16demos.7z', '[1st]_[BiO]_[de_nuke]_[HLTV]_[ctt].rar', 'pendudemos.zip', 'mTw_vs_Matrix_nuke.zip', 'wcg2004_final.dem',
+  'eswc2004_semi.rar', '[X3]_[NiP]_[de_nuke]_[HLTV]_[ctt].zip', 'lan-arena4.ace', 'cpl_dallas_2003.zip', 'GG_GX_eswc.zip', '[SK]_[9]_[de_inferno]_[HLTV]_[t].zip',
+  'janv2001.zip', 'aAa_vs_GG_-_Dust2.zip', 'clanbase_eurocup_iv.rar', 'de_cbble_atl2.dem', 'fevmars2003.zip', 'kin_povs_part3.zip', '[MAFIA]_[NiP]_[de_dust2].zip']
+const rain = $('rain')
+const drops = []
+for (let i = 0; i < 46; i++) {
+  const s = document.createElement('span')
+  s.textContent = NAMES[i % NAMES.length]
+  if (i % 7 === 3) s.className = 'hot'
+  rain.appendChild(s)
+  drops.push({ el: s, x: ((i * 397) % 1880) - 60, speed: 45 + ((i * 53) % 90), off: (i * 211) % 1300, size: 16 + ((i * 7) % 12) })
+}
+// chips flying into the drop zone
+const CHIPS = ['[aAa]_[GG]_[de_dust2]_[HLTV]_[ctt].zip', 'Ffr-s_aaa_dust_ct.ace', 'cs16demos.7z', 'nbog_tamm1.rar', 'GG_IES_wcg2002.zip', 'demos Avril Mai 2003.zip', '[NiP]_[SK]_[de_inferno]_[HLTV]_[ctt].rar']
+const chipBox = $('chips')
+const chips = CHIPS.map((n, i) => {
+  const d = document.createElement('div')
+  d.className = 'chip abs'
+  d.textContent = n
+  chipBox.appendChild(d)
+  const fromLeft = i % 2 === 0
+  return { el: d, x0: fromLeft ? -620 : 260 + i * 90, y0: fromLeft ? 180 + i * 110 : -90, start: 4.5 + i * 0.32 }
+})
+
+function render(t) {
+  // background
+  const bgO = 0.55 + 0.45 * p(t, 4.0, 6.0)
+  set($('bg'), bgO * (1 - p(t, T.s5[0], T.s5[0] + 0.6)) + vis(t, T.s7[0], T.s7[1] + 1, 0.8, 0.1) * 0.9, `scale(${1.04 + 0.06 * (t / 40)})`)
+  set($('bg2'), vis(t, T.s5[0], T.s6[1], 0.6, 0.6), `scale(1.06) translateY(${-80 - 6 * (t - T.s5[0])}px)`)
+
+  // rain
+  const rv = vis(t, 0, 9.4, 0.6, 1.2)
+  rain.style.opacity = rv
+  for (const d of drops) {
+    const y = ((t * d.speed + d.off) % 1300) - 120
+    d.el.style.transform = `translate(${d.x}px, ${y}px)`
+    d.el.style.fontSize = d.size + 'px'
+    d.el.style.opacity = 0.16 + 0.12 * Math.sin(d.off + t)
+  }
+
+  // 1 · hook
+  const o1 = vis(t, T.s1[0], T.s1[1], 0.3, 0.5)
+  set($('s1'), o1, `translateY(${-40 * eio(p(t, 3.9, 4.4))}px)`)
+  for (let k = 1; k <= 4; k++) {
+    const q = eo(p(t, 0.2 + k * 0.08, 0.8 + k * 0.08))
+    const el = $('a' + k)
+    const dx = k === 1 ? -14 : k === 2 ? 14 : 0, dy = k === 3 ? -14 : k === 4 ? 14 : 0
+    el.setAttribute('transform', `translate(${dx * (1 - q)} ${dy * (1 - q)})`)
+    el.style.opacity = q
+  }
+  set($('s1cross'), 1, `rotate(${90 * (1 - eo(p(t, 0.2, 1.1)))}deg)`)
+  set($('s1k'), eo(p(t, 0.6, 1.2)), `translateY(${20 * (1 - eo(p(t, 0.6, 1.2)))}px)`)
+  set($('s1a'), eo(p(t, 1.0, 1.7)), `translateY(${30 * (1 - eo(p(t, 1.0, 1.7)))}px)`)
+  set($('s1b'), eo(p(t, 2.1, 2.8)), `translateY(${30 * (1 - eo(p(t, 2.1, 2.8)))}px)`)
+
+  // 2 · drop + counters
+  const o2 = vis(t, T.s2[0], T.s2[1], 0.4, 0.5)
+  set($('s2'), o2)
+  set($('s2cap'), eo(p(t, 4.4, 5.0)), `translateX(${-40 * (1 - eo(p(t, 4.4, 5.0)))}px)`)
+  set($('s2win'), eo(p(t, 4.3, 4.9)), `scale(${0.94 + 0.06 * back(p(t, 4.3, 5.0))})`)
+  const glow = chips.reduce((g, c) => Math.max(g, 1 - Math.abs(t - (c.start + 0.9)) / 0.35), 0)
+  $('dropzone').style.borderColor = glow > 0 ? `rgba(196,181,80,${0.5 + 0.5 * cl(glow)})` : ''
+  $('dropzone').style.background = glow > 0 ? `rgba(196,181,80,${0.10 * cl(glow)})` : 'transparent'
+  for (const c of chips) {
+    const q = p(t, c.start, c.start + 0.9)
+    const e = eio(q)
+    const tx = 580 + (c.x0 - 580) * (1 - e), ty = 560 + (c.y0 - 560) * (1 - e)
+    const o = q <= 0 ? 0 : q < 0.85 ? 1 : 1 - (q - 0.85) / 0.15
+    set(c.el, o * o2, `translate(${tx - 200}px, ${ty}px) scale(${1 - 0.45 * e}) rotate(${(1 - e) * (c.x0 < 0 ? -8 : 6)}deg)`)
+  }
+  const cq = eo(p(t, 5.6, 8.2))
+  set($('s2count'), eo(p(t, 5.3, 5.9)), `translateX(${40 * (1 - eo(p(t, 5.3, 5.9)))}px)`)
+  $('c1').textContent = fmt(39041 * cq)
+  $('c2').textContent = fmt(47738 * cq)
+  $('c3').textContent = fmt(1242150 * cq)
+  $('c4').textContent = fmt(7604569 * cq)
+
+  // 3 · library search
+  const o3 = vis(t, T.s3[0], T.s3[1], 0.5, 0.5)
+  set($('s3'), o3)
+  const in3 = eo(p(t, 9.0, 9.9))
+  set($('s3win'), in3, `perspective(2400px) translateY(${60 * (1 - in3)}px) rotateX(${8 * (1 - in3)}deg) scale(${0.94 + 0.06 * in3})`)
+  const zin = eio(p(t, 9.9, 10.8)), zout = eio(p(t, 12.6, 13.6))
+  $('s3zoom').style.transform = `scale(${1 + 0.9 * zin - 0.9 * zout})`
+  const word = 'heaton+pott1'
+  const n = Math.floor(word.length * p(t, 10.9, 12.2))
+  const caretOn = Math.floor(t * 2.5) % 2 === 0 || (t > 10.9 && t < 12.2)
+  $('typed').innerHTML = word.slice(0, n).replace(/&/g, '&amp;') + (t < 12.45 && caretOn ? '<span class="caret"></span>' : '')
+  const swap = p(t, 12.35, 12.6)
+  $('libB').style.opacity = swap
+  $('typebox').style.opacity = 1 - swap
+  $('typed').style.opacity = 1 - swap
+  const r = vis(t, 13.5, 15.1, 0.3, 0.4)
+  set($('ring43'), r, `scale(${1 + 0.06 * Math.sin(t * 7)})`)
+  set($('s3cap'), eo(p(t, 9.6, 10.3)) * (1 - p(t, 14.7, 15.2)), `translateY(${30 * (1 - eo(p(t, 9.6, 10.3)))}px)`)
+
+  // 4 · match
+  const o4 = vis(t, T.s4[0], T.s4[1], 0.5, 0.6)
+  set($('s4'), o4)
+  const in4 = eo(p(t, 15.0, 15.8))
+  const push = eio(p(t, 21.0, 21.6))
+  set($('s4win'), in4, `perspective(2400px) translateY(${60 * (1 - in4)}px) rotateX(${8 * (1 - in4)}deg) scale(${(0.94 + 0.06 * in4) * (1 + 0.5 * push)})`)
+  const pan = eio(p(t, 15.6, 18.6))
+  $('s4pan').style.transform = `translateY(${-300 * pan}px)`
+  // cursor travels to ▶ R7 and clicks
+  const cm = eio(p(t, 17.9, 19.2))
+  const cx = 1100 + (735 - 1100) * cm, cy = 1000 + (691 - 1000) * cm
+  const click = vis(t, 19.35, 19.65, 0.1, 0.15)
+  set($('cur'), vis(t, 17.7, 21.2, 0.3, 0.3), `translate(${cx}px, ${cy}px) scale(${1 - 0.15 * click})`)
+  set($('ringR7'), vis(t, 18.7, 21.3, 0.3, 0.3), `scale(${1 + 0.08 * Math.sin(t * 8) + 0.25 * click})`)
+  set($('toast'), eo(p(t, 19.7, 20.1)) * (1 - p(t, 21.1, 21.4)), `translateX(${60 * (1 - eo(p(t, 19.7, 20.1)))}px)`)
+  set($('s4cap'), eo(p(t, 15.6, 16.3)) * (1 - p(t, 20.9, 21.3)), `translateY(${30 * (1 - eo(p(t, 15.6, 16.3)))}px)`)
+
+  // 5 · versions
+  const a5 = T.s5[0]
+  const o5 = vis(t, T.s5[0], T.s5[1], 0.5, 0.5)
+  set($('s5'), o5)
+  set($('s5k'), eo(p(t, a5 + 0.2, a5 + 0.7)))
+  set($('s5a'), eo(p(t, a5 + 0.3, a5 + 0.9)), `translateY(${30 * (1 - eo(p(t, a5 + 0.3, a5 + 0.9)))}px)`)
+  set($('s5b'), eo(p(t, a5 + 0.7, a5 + 1.3)))
+  for (let i = 0; i < 6; i++) {
+    const s = a5 + 1.1 + i * 0.32
+    const q = back(p(t, s, s + 0.5))
+    const lit = p(t, s + 0.35, s + 0.6)
+    const el = $('t' + i)
+    set(el, cl(p(t, s, s + 0.3)), `translateY(${60 * (1 - q)}px)`)
+    el.style.borderColor = lit > 0 ? `rgba(196,181,80,${lit}) var(--line) var(--line) rgba(196,181,80,${lit})` : ''
+    el.style.boxShadow = `0 30px 70px rgba(0,0,0,.5), 0 0 ${40 * lit}px rgba(196,181,80,${0.35 * lit})`
+    el.querySelector('.pill').style.opacity = lit
+  }
+  set($('s5c'), eo(p(t, a5 + 3.4, a5 + 4.0)))
+
+  // 6 · keys
+  const a6 = T.s6[0]
+  const o6 = vis(t, T.s6[0], T.s6[1], 0.5, 0.5)
+  set($('s6'), o6)
+  const in6 = eo(p(t, a6, a6 + 0.8))
+  set($('s6win'), in6, `perspective(2400px) translateX(${80 * (1 - in6)}px) rotateY(${-10 * (1 - in6)}deg)`)
+  $('s6pan').style.transform = `translateY(${-90 - 120 * eio(p(t, a6 + 0.6, a6 + 4.8))}px)`
+  set($('ringZ'), vis(t, a6 + 1.4, a6 + 4.4, 0.3, 0.4), `scale(${1 + 0.07 * Math.sin(t * 7)})`)
+  set($('s6cap'), eo(p(t, a6 + 0.3, a6 + 1.0)), `translateX(${-40 * (1 - eo(p(t, a6 + 0.3, a6 + 1.0)))}px)`)
+
+  // 7 · outro
+  const a7 = T.s7[0]
+  set($('s7'), vis(t, T.s7[0], T.s7[1] + 1, 0.6, 0.1))
+  set($('s7icon'), eo(p(t, a7 + 0.2, a7 + 0.8)), `scale(${0.6 + 0.4 * back(p(t, a7 + 0.2, a7 + 0.9))}) rotate(${-90 * (1 - eo(p(t, a7 + 0.2, a7 + 1.0)))}deg)`)
+  set($('s7t'), eo(p(t, a7 + 0.6, a7 + 1.2)), `translateY(${30 * (1 - eo(p(t, a7 + 0.6, a7 + 1.2)))}px)`)
+  $('s7t').style.letterSpacing = (0.3 - 0.18 * eo(p(t, a7 + 0.6, a7 + 1.8))) + 'em'
+  set($('s7s'), eo(p(t, a7 + 1.0, a7 + 1.6)))
+  set($('s7b'), eo(p(t, a7 + 1.5, a7 + 2.1)), `translateY(${20 * (1 - eo(p(t, a7 + 1.5, a7 + 2.1)))}px)`)
+  set($('s7u'), eo(p(t, a7 + 2.0, a7 + 2.6)))
+  set($('s7by'), eo(p(t, a7 + 2.4, a7 + 3.0)))
+
+  // fades from and to black
+  $('fade').style.opacity = Math.max(1 - p(t, 0, 0.4), p(t, T.s7[1] - 0.35, T.s7[1]))
+}
+window.render = render
+const q = new URLSearchParams(location.search)
+render(q.has('t') ? Number(q.get('t')) : 0)
+</script>
+</body>
+</html>

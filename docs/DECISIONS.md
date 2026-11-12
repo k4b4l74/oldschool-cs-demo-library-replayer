@@ -42,3 +42,4 @@ One dated entry per decision that changes scope or behaviour. Newest last.
 - **MIT licence**, the most open choice for contributions. Bundled 7-Zip and acefile keep their own licences; the setup program installs `LICENSE.txt` with the app.
 - **The repository starts a new history** before going public: one initial commit with the current files.
 - **Version 1.0.0, the first public release** (the 0.5.x versions were test builds): the setup program on the GitHub Releases page with its SHA-256.
+- **Trailer** in `docs/trailer/`: 38 s, 1080p, made for X; an HTML page animated frame by frame from the app's screens, one CC0 orchestral piece ("Battle Theme A", cynicmusic) and soft effects synthesised in code. No Valve artwork. The README shows its poster, linked to the video.

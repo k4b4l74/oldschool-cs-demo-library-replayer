@@ -33,3 +33,6 @@ engines/
 # Notes and scripts for one machine (see AGENTS.md)
 CLAUDE.local.md
 Start dev app.cmd
+
+# Trailer work files (docs/trailer/build.py)
+docs/trailer/out/

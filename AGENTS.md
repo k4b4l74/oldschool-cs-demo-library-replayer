@@ -72,6 +72,7 @@ frontend/            React 19 + TypeScript + Vite; TanStack Query; React Router;
   src/index.css      olive "old CS menus" theme (default) + "paper"; colours and shapes only, no Valve assets
 packaging/           oldschool.spec (PyInstaller), installer.iss (Inno Setup), launch.py, smoke_check.py
 docs/                ARCHITECTURE.md, DECISIONS.md, CHECKLISTS.md, images/
+  trailer/           the 38 s video trailer and how to rebuild it (build.py, Windows + Chrome)
 .agents/skills/      task guides for coding agents (see the table above)
 .github/             CI (check.yml), issue forms, pull request template
 tasks.py             developer tasks

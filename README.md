@@ -14,7 +14,8 @@ Drop in old demos and archives, find any match, team or player, and watch it in 
 ![Local only](https://img.shields.io/badge/runs-100%25%20on%20your%20PC-4a5a2e?style=flat-square)
 ![License: MIT](https://img.shields.io/badge/license-MIT-4a5a2e?style=flat-square)
 
-<img src="docs/images/library.png" alt="The library: 43 matches where heaton and pott1 played together" width="900">
+<a href="docs/trailer/oldschool-cs-demos-trailer.mp4"><img src="docs/trailer/poster.jpg" alt="Watch the trailer" width="900"></a><br>
+<sub>▶ <a href="docs/trailer/oldschool-cs-demos-trailer.mp4">Watch the trailer</a> (38 s, with sound)</sub>
 
 </div>
 
@@ -33,6 +34,8 @@ This app does the work: it opens every archive, reads every demo, recognises tea
 - **Your keys everywhere.** A Controls page like the game's: the same keys in every version (HLTV free camera, scores, HUD, screenshot, pause, slow motion, fast forward…), shown as printed on your own keyboard.
 - **Never touches your files.** Originals are only read. Nothing leaves your PC: no account, no cloud, the app listens on `127.0.0.1` only.
 - **An old-school look.** An olive theme inspired by the CS 1.x menus, and a light "paper" theme.
+
+<img src="docs/images/library.png" alt="The library: 43 matches where heaton and pott1 played together" width="100%">
 
 <table>
 <tr>
